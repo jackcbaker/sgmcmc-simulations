@@ -105,7 +105,7 @@ runSim = function(sgmcmc, testData) UseMethod("runSim")
 
 runSim.sgmcmccv = function(sgmcmc, testData) {
     testLogLoss = - 1 / as.double(testData$testSize) * logLik(sgmcmc$params, testData$testPlaceholders)
-    sess = initSess(sgmcmc)
+    sess = initSess(sgmcmc, verbose = FALSE)
     # Account for 5x comp cost of sghmc by running for less long
     if (class(sgmcmc)[1] == "sghmc") {
         nIters = 2000
@@ -125,7 +125,7 @@ runSim.sgmcmccv = function(sgmcmc, testData) {
 
 runSim.sgmcmc = function(sgmcmc, testData) {
     testLogLoss = - 1 / as.double(testData$testSize) * logLik(sgmcmc$params, testData$testPlaceholders)
-    sess = initSess(sgmcmc)
+    sess = initSess(sgmcmc, verbose = FALSE)
     # Account for 5x comp cost of sghmc by running for less iterations
     if (class(sgmcmc)[1] == "sghmc") {
         nIters = 2000
