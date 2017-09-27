@@ -1,51 +1,7 @@
-library(ggplot2)
+### Run simulations in Section 5.3 ###
 library(sgmcmc)
 
-runSimulations = function() {
-    stepsizes = list("sgld" = 1e-4, "sghmc" = 5e-5, "sgnht" = 5e-6, "sgldcv" = 5e-5,
-            "sghmccv" = 5e-6, "sgnhtcv" = 5e-7)
-    for (method in names(stepsizes)) {
-        cat(paste0(method, " "))
-        stepsize = stepsizes[[method]]
-        runSeed(1, method, stepsize)
-    }
-}
-
-plotNN = function() {
-    # Build a list of log loss plots
-    methods = c("sgld", "sghmc", "sgnht", "sgldcv", "sghmccv", "sgnhtcv")
-    plotList = list()
-    for (method in methods) {
-        dataCurr = read.table(paste0("nn/", method))
-        if(substr(method, nchar(method) - 1, nchar(method)) == "cv") {
-            dataCurr$Type = "Control Variate"
-        } else {
-            dataCurr$Type = "Standard"
-        }
-        if (grepl("sghmc", method)) {
-            dataCurr$Iteration = seq(from = 10, to = 10^4, by = 50)
-        } else {
-            dataCurr$Iteration = seq(from = 10, to = 10^4, by = 10)
-        }
-        dataCurr$Method = method
-        plotList[[method]] = dataCurr
-    }
-
-    plotFrame = do.call("rbind", plotList)
-    plotFrame$processed = plotFrame$Iteration * 500 / 55000
-    # Set colors for plotting
-    colorPal = c("#E69F00", "#56B4E9", "#009E73", "#E69F00", "#56B4E9", "#009E73")
-    plotFrame$Method = factor(plotFrame$Method, levels = methods)
-
-    p = ggplot(plotFrame, aes(x = processed, y = V1, color = Method)) +
-        geom_line(alpha = 0.8) +
-        ylab("Log loss of test set") +
-        xlab("Proportion of dataset processed") +
-        scale_color_manual(values=colorPal, name = methods) +
-        facet_grid(. ~ Type)
-    ggsave("plots/sim-nn.pdf", width = 7, height = 3)
-}
-
+# Declare log likelihood, as described in manuscript
 logLik = function(params, dataset) {
     YEst = tf$nn$softmax(tf$matmul(dataset$X, params$B) + params$b)
     YEst = tf$nn$softmax(tf$matmul(YEst, params$A) + params$a)
@@ -53,6 +9,7 @@ logLik = function(params, dataset) {
     return(logLik)
 }
 
+# Declare log prior, as described in manuscript
 logPrior = function(params) {
     distLambda = tf$contrib$distributions$Gamma(1, 1)
     distA = tf$contrib$distributions$Normal(0, tf$rsqrt(params$lambdaA))
@@ -67,10 +24,38 @@ logPrior = function(params) {
     return(logPrior)
 }
 
+runSimulations = function() {
+    # Declare good stepsizes for each sgmcmc function
+    stepsizes = list("sgld" = 1e-4, "sghmc" = 5e-5, "sgnht" = 5e-6, "sgldcv" = 5e-5,
+            "sghmccv" = 5e-6, "sgnhtcv" = 5e-7)
+    testSeed = 1
+    # Generate test data given test seed
+    set.seed(testSeed)
+    testData = genTestData()
+    cat("sgmcmc function: ")
+    for (method in names(stepsizes)) {
+        cat(paste0(method, " "))
+        stepsize = stepsizes[[method]]
+        runSeed(testSeed, method, stepsize, testData)
+    }
+}
+
+runSeed = function(testSeed, method, stepsize, testData) {
+    # Declare main arguments to be passed to each sgmcmc function
+    setupArgs = list( "logLik" = logLik, "dataset" = testData$dataset, 
+            "params" = testData$params, "stepsize" = stepsize, "logPrior" = logPrior, 
+            "minibatchSize" = testData$minibatchSize, seed = testSeed)
+    # Run setup function, as described in step by step usage
+    sgmcmc = setupSGMCMC(method, setupArgs)
+    # Run simulation, calculating log loss every 10 iterations and write to file for plotting
+    logLoss = runSim(sgmcmc, testData)
+    write.table(logLoss, paste0("nn/", method), row.names = FALSE, col.names = FALSE)
+}
+
 genTestData = function() {
     testData = list()
     # Load MNIST dataset
-    data("mnist")
+    mnist = getDataset("mnist")
     # Declare dataset
     testData$dataset = list("X" = mnist$train$images, "y" = mnist$train$labels)
     testData$testset = list("X" = mnist$test$images, "y" = mnist$test$labels)
@@ -102,27 +87,20 @@ genTestData = function() {
     return(testData)
 }
 
-runSeed = function(testSeed, method, stepsize) {
-    # Generate test data
-    set.seed(testSeed)
-    testData = genTestData()
-    setupArgs = list( "logLik" = logLik, "dataset" = testData$dataset, 
-            "params" = testData$params, "stepsize" = stepsize, "logPrior" = logPrior, 
-            "minibatchSize" = testData$minibatchSize, seed = testSeed)
-    sgmcmc = setupSGMCMC(method, setupArgs)
-    logLoss = runSim(sgmcmc, testData)
-    write.table(logLoss, paste0("nn/", method), row.names = FALSE, col.names = FALSE)
-}
-
 setupSGMCMC = function(method, setupArgs) {
     suffix = substr(method, nchar(method) - 1, nchar(method))
+    # Deal with case that sgmcmc is a control variate function
     if (suffix == "cv") {
         setupArgs$optStepsize = 3e-5
+        setupArgs$verbose = FALSE
     }
+    # run setup function, as described in step by step usage
     sgmcmc = do.call(paste0(method, "Setup"), setupArgs)
     return(sgmcmc)
 }
 
+# Run MCMC simulation, separating out control variate and standard methods since they require
+#  different procedures.
 runSim = function(sgmcmc, testData) UseMethod("runSim")
 
 runSim.sgmcmccv = function(sgmcmc, testData) {
@@ -135,7 +113,7 @@ runSim.sgmcmccv = function(sgmcmc, testData) {
         nIters = 10^4
     }
     logLossOut = rep(0, nIters / 10)
-    # Run full SGMCMC
+    # Run full SGMCMC, storing log loss every 10 iterations
     for (i in 1:nIters) {
         sgmcmcStep(sgmcmc, sess)
         if (i %% 10 == 0) {
@@ -148,7 +126,7 @@ runSim.sgmcmccv = function(sgmcmc, testData) {
 runSim.sgmcmc = function(sgmcmc, testData) {
     testLogLoss = - 1 / as.double(testData$testSize) * logLik(sgmcmc$params, testData$testPlaceholders)
     sess = initSess(sgmcmc)
-    # Account for 5x comp cost of sghmc by running for less long
+    # Account for 5x comp cost of sghmc by running for less iterations
     if (class(sgmcmc)[1] == "sghmc") {
         nIters = 2000
     } else {
@@ -157,11 +135,8 @@ runSim.sgmcmc = function(sgmcmc, testData) {
     # Burn-in
     for (i in 1:nIters) {
         sgmcmcStep(sgmcmc, sess)
-        if (i %% 10 == 0) {
-#            print(sess$run(testLogLoss, feed_dict = testData$testDict))
-        }
     }
-    # Run full SGMCMC
+    # Run full SGMCMC, storing log loss every 10 iterations
     logLossOut = rep(0, nIters / 10)
     for (i in 1:nIters) {
         sgmcmcStep(sgmcmc, sess)
