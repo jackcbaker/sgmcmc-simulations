@@ -1,4 +1,38 @@
-install_deps()
+# Install relevant dependencies
+installDeps = function() {
+    # Install dependencies if needed
+    message("Installing required R dependencies...\n")
+    if (!require(ggplot2)) {
+        install.packages("ggplot2")
+    }
+    if (!require(MASS)) {
+        install.packages("MASS")
+    }
+    message("\nChecking TensorFlow is installed properly...\n")
+    if (!require(tensorflow)) {
+        install.packages("tensorflow")
+        tensorflow::install_tensorflow()
+    }
+    tryCatch({
+        tensorflow$tf$constant(1)
+    }, error = function (e) {
+        tensorflow::install_tensorflow()
+    })
+    message("\nChecking sgmcmc package installed\n")
+    if (!require(sgmcmc)) {
+        install.packages("sgmcmc")
+    }
+    # Get TensorFlow warnings out the way so output is more coherent
+    quickSess = tf$Session()
+    message("\n")
+    # Create relevant directories if they do not exist
+    for (f in c("gaussMix", "logReg", "nn", "plots")) {
+        dir.create(f, showWarnings = FALSE)
+    }
+}
+
+# Run simulations
+installDeps()
 source("plots.R")
 message("\n##########\nRunning usage examples (Section 4)\n")
 source("usage.R")
@@ -15,40 +49,3 @@ message("\n##########\nRunning simulations for Bayesian Neural Network (Section 
 source("nn.R")
 runSimulations()
 plotNN()
-
-
-# Install relevant dependencies
-install_deps = function() {
-    # Install dependencies if needed
-    message("Installing required R dependencies...")
-    if (!require(ggplot2)) {
-        install.packages("ggplot2")
-    }
-    if (!require(MASS)) {
-        install.packages("MASS")
-    }
-    if (!require(ggplot2)) {
-        install.packages("ggplot2")
-    }
-    message("Checking TensorFlow is installed properly")
-    if (!require(tensorflow)) {
-        install.packages("tensorflow")
-        tensorflow::install_tensorflow()
-    }
-    tryCatch({
-        tensorflow$tf$constant(1)
-    }, error = function (e) {
-        tensorflow::install_tensorflow()
-    })
-    message("Checking sgmcmc package installed")
-    if (!require(sgmcmc)) {
-        install.packages("sgmcmc")
-    }
-    # Get TensorFlow warnings out the way so output is more coherent
-    quickSess = tf$Session()
-    message("\n")
-    # Create relevant directories if they do not exist
-    for (f in c("gaussMix", "logReg", "nn", "plots")) {
-        dir.create(f, showWarnings = FALSE)
-    }
-}
