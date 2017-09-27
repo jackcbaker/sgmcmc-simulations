@@ -2,14 +2,14 @@
 installDeps = function() {
     # Install dependencies if needed
     message("Installing required R dependencies...\n")
-    if (!require(ggplot2)) {
+    if (!require(ggplot2, quietly = TRUE)) {
         install.packages("ggplot2", repos = "https://cloud.r-project.org")
     }
-    if (!require(MASS)) {
+    if (!require(MASS, quietly = TRUE)) {
         install.packages("MASS", repos = "https://cloud.r-project.org")
     }
     message("\nChecking TensorFlow is installed properly...\n")
-    if (!require(tensorflow)) {
+    if (!require(tensorflow, quietly = TRUE)) {
         install.packages("tensorflow", repos = "https://cloud.r-project.org")
         tensorflow::install_tensorflow()
     }
@@ -19,7 +19,7 @@ installDeps = function() {
         tensorflow::install_tensorflow()
     })
     message("\nChecking sgmcmc package installed\n")
-    if (!require(sgmcmc)) {
+    if (!require(sgmcmc, quietly = TRUE)) {
         install.packages("sgmcmc", repos = "https://cloud.r-project.org")
     }
     # Get TensorFlow warnings out the way so output is more coherent
