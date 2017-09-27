@@ -21,3 +21,8 @@ Some of the simulations load large datasets into memory, so it's recommended you
 ### Run time
 
 Simulations took approximately 3 hours on four 2.3GHz Intel Xeon cores.
+
+
+### Troubleshooting
+
+`Error: Python module tensorflow was not found.` -- Try rerunning `runSimulations.R` or restarting your `R` session. This Error can sometimes occur when `TensorFlow` is installed during the `runSimulations.R` script and then is immediately called. Restarting the `R` session and rerunning the script should solve the error.
