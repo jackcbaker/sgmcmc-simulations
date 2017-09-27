@@ -14,7 +14,7 @@ installDeps = function() {
         tensorflow::install_tensorflow()
     }
     tryCatch({
-        tensorflow$tf$constant(1)
+        tensorflow::tf$constant(1)
     }, error = function (e) {
         tensorflow::install_tensorflow()
     })
