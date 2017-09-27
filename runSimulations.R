@@ -3,14 +3,14 @@ installDeps = function() {
     # Install dependencies if needed
     message("Installing required R dependencies...\n")
     if (!require(ggplot2)) {
-        install.packages("ggplot2")
+        install.packages("ggplot2", repos = "https://cloud.r-project.org")
     }
     if (!require(MASS)) {
-        install.packages("MASS")
+        install.packages("MASS", repos = "https://cloud.r-project.org")
     }
     message("\nChecking TensorFlow is installed properly...\n")
     if (!require(tensorflow)) {
-        install.packages("tensorflow")
+        install.packages("tensorflow", repos = "https://cloud.r-project.org")
         tensorflow::install_tensorflow()
     }
     tryCatch({
@@ -20,7 +20,7 @@ installDeps = function() {
     })
     message("\nChecking sgmcmc package installed\n")
     if (!require(sgmcmc)) {
-        install.packages("sgmcmc")
+        install.packages("sgmcmc", repos = "https://cloud.r-project.org")
     }
     # Get TensorFlow warnings out the way so output is more coherent
     quickSess = tf$Session()
