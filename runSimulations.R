@@ -1,6 +1,6 @@
 # Install relevant dependencies
 installDeps = function() {
-    suppressPackageStartupMessages({
+    suppressWarnings({
         # Install dependencies if needed
         message("Installing required R dependencies...\n")
         if (!require(ggplot2, quietly = TRUE)) {
@@ -24,7 +24,8 @@ installDeps = function() {
             install.packages("sgmcmc", repos = "https://cloud.r-project.org")
         }
         # Get TensorFlow warnings out the way so output is more coherent
-        quickSess = tensorflow::tf$Session()
+        library(tensorflow)
+        quickSess = tf$Session()
         message("\n")
         # Create relevant directories if they do not exist
         for (f in c("gaussMix", "logReg", "nn", "plots")) {
