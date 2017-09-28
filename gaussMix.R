@@ -33,7 +33,7 @@ logPrior = function( params ) {
 
 runSimulations = function() {
     # Set stepsizes for each method, run each method for seed 2
-    stepsizeList = list("sgld" = 5e-3, "sghmc" = 5e-4, "sgnht" = 3e-4, "sgldcv" = 1e-2, "sghmccv" = 1.5e-3, "sgnhtcv" = 3e-3)
+    stepsizeList = list("sgld" = 5e-3, "sghmc" = 5e-4, "sgnht" = 3e-4, "sgldcv" = 1e-2, "sghmccv" = 1.5e-3, "sgnhtcv" = 1e-3)
     methods = c("sgld", "sghmc", "sgnht", "sgldcv", "sghmccv", "sgnhtcv")
     plotList = list()
     cat("sgmcmc function: ")
