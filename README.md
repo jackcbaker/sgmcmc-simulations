@@ -27,12 +27,13 @@ Simulations took approximately 3 hours on a quad core i5 laptop with 8GB RAM.
 
 `Error: Python module tensorflow was not found.` -- Try rerunning `runSimulations.R` or restarting your `R` session. This Error can sometimes occur when `TensorFlow` is installed during the `runSimulations.R` script and then is immediately called. Restarting the `R` session and rerunning the script should solve the error.
 
+In order to get fair runtimes for `Stan` when running sgmcmc stan plot ensure the model does not need to be recompiled each time `Stan` is run.
 
 ### Original Setup Details
 
-Original results were run on a laptop with Ubuntu 16.04 LTS; `R` version 3.2.3; `Python` version 2.7.12; `TensorFlow` version 1.3.0; `TensorFlow` for `R` version 1.4.0; `sgmcmc` version 0.2.0. 
+Original results were run on a laptop with Ubuntu 16.04 LTS; `R` version 3.2.3; `Python` version 2.7.12; `TensorFlow` version 1.3.0; `TensorFlow` for `R` version 1.4.0; `sgmcmc` version 0.2.0; `rstan` version 2.16.2. 
 
-Results were reproduced on a linux cluster running Ubuntu 14.04 LTS; `R`version 3.2.3; `Python` version 2.7.6; `TensorFlow` version 1.3.0; `TensorFlow` for `R` version 1.4.0; `sgmcmc` version 0.2.0.
+Results were reproduced on a linux cluster running Ubuntu 14.04 LTS; `R`version 3.2.3; `Python` version 2.7.6; `TensorFlow` version 1.3.0; `TensorFlow` for `R` version 1.4.0; `sgmcmc` version 0.2.0; `rstan` version 2.16.2.
 
 
 ### Remarks

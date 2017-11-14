@@ -9,6 +9,9 @@ installDeps = function() {
         if (!require(MASS, quietly = TRUE)) {
             install.packages("MASS", repos = "https://cloud.r-project.org")
         }
+        if (!require(rstan, quietly = TRUE)) {
+            install.packages("rstan", repos = "https://cloud.r-project.org")
+        }
         message("\nChecking TensorFlow is installed properly...\n")
         if (!require(tensorflow, quietly = TRUE)) {
             install.packages("tensorflow", repos = "https://cloud.r-project.org")
@@ -37,18 +40,22 @@ installDeps = function() {
 # Run simulations
 installDeps()
 source("plots.R")
-message("\n##########\nRunning usage examples (Section 4)\n")
+message("\n##########\nRunning sgmcmc stan plot (Section 2)")
+source("sgmcmcVStan.R")
+runSimulations()
+plotStanSGMCMC()
+message("\n##########\nRunning usage examples (Section 5)\n")
 source("usage.R")
 runSimulations()
-message("\n##########\nRunning simulations for Gaussian Mixture (Section 5.1)\n")
+message("\n##########\nRunning simulations for Gaussian Mixture (Section 6.1)\n")
 source("gaussMix.R")
 runSimulations()
 plotGM()
-message("\n##########\nRunning simulations for Logistic Regression (Section 5.2)\n")
+message("\n##########\nRunning simulations for Logistic Regression (Section 6.2)\n")
 source("logReg.R")
 runSimulations()
 plotLogReg()
-message("\n##########\nRunning simulations for Bayesian Neural Network (Section 5.3)\n")
+message("\n##########\nRunning simulations for Bayesian Neural Network (Section 6.3)\n")
 source("nn.R")
 runSimulations()
 plotNN()

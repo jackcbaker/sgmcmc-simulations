@@ -1,5 +1,49 @@
 library(ggplot2)
 
+plotStanSGMCMC = function() {
+    Nseq = c(10^3, 5000, 10^4, 5 * 10^4, 10^5, 5*10^5, 10^6)
+    stan = list()
+    sgmcmc = list()
+    for (N in Nseq) {
+        kl = read.table(paste0("stan-sgmcmc/stan/", N, "/kl"))$V1
+        df = data.frame("kl" = mean(kl), "klmin" = min(kl), "klmax" = max(kl))
+        stan[[N]] = df
+        stan[[N]]$N = N
+        stantime = read.table(paste0("stan-sgmcmc/stan/", N, "/time"))$V1
+        stan[[N]]$time = mean(stantime)
+        stan[[N]]$timemin = min(stantime)
+        stan[[N]]$timemax = max(stantime)
+        kl = read.table(paste0("stan-sgmcmc/sgmcmc/", N, "/kl"))$V1
+        df = data.frame("kl" = mean(kl), "klmin" = min(kl), "klmax" = max(kl))
+        sgmcmc[[N]] = df
+        sgmcmc[[N]]$N = N
+        sgmcmctime = read.table(paste0("stan-sgmcmc/sgmcmc/", N, "/time"))$V1
+        sgmcmc[[N]]$time = mean(sgmcmctime)
+        sgmcmc[[N]]$timemin = min(sgmcmctime)
+        sgmcmc[[N]]$timemax = max(sgmcmctime)
+    }
+    standf = do.call(rbind, stan)
+    standf$Method = "Stan"
+    sgmcmcdf = do.call(rbind, sgmcmc)
+    sgmcmcdf$Method = "sgmcmc"
+
+    plotFrame = rbind(standf, sgmcmcdf)
+    plotFrame$N = as.numeric(plotFrame$N)
+    p = ggplot(plotFrame, aes(x = N, y = kl, ymin = klmin, ymax = klmax, fill = Method)) +
+        geom_ribbon(alpha = 0.5) +
+        xlab("Number of Observations") +
+        scale_x_log10(breaks=c(10^3, 10^4, 10^5, 10^6),labels=c("10^3", "10^4", "10^5", "10^6")) +
+        ylab("KL divergence")
+    ggsave("plots/sgmcmc-stan-kl.pdf", width = 4, height = 2)
+
+    p = ggplot(plotFrame, aes(x = N, y = time, ymin = timemin, ymax = timemax, fill = Method)) +
+        geom_ribbon(alpha = 0.5) +
+        xlab("Number of Observations") +
+        scale_x_log10(breaks=c(10^3, 10^4, 10^5, 10^6),labels=c("10^3", "10^4", "10^5", "10^6")) +
+        ylab("Run time (secs)")
+    ggsave("plots/sgmcmc-stan-time.pdf", width = 4, height = 2)
+}
+
 plotGM = function() {
     methods = c( "sgld", "sghmc", "sgnht", "sgldcv", "sghmccv", "sgnhtcv" )
     # Read in truth baseline calculated using STAN, take theta1 output only
