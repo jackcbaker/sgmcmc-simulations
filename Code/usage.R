@@ -73,7 +73,7 @@ standardUsage = function(covertype) {
     ggplot(plotFrame, aes(x = Iteration, y = logLoss)) +
         geom_line(color = "maroon") +
         ylab("Log loss of test set")
-    ggsave("plots/usage.pdf", width = 7, height = 3)
+    ggsave("../Figures/usage.pdf", width = 7, height = 3)
 }
 
 stepByStepUsage = function(covertype) {

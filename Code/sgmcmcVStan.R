@@ -50,13 +50,13 @@ stanNorm = function() {
 # Declare logLik and logPrior for sgmcmc
 # Standard normal density with N(0,10) prior
 logLik = function(params, dataset) {
-    distn = tf$contrib$distributions$Normal(params$theta, 1.0)
+    distn = tf$distributions$Normal(params$theta, 1.0)
     logLik = tf$reduce_sum(distn$log_prob(dataset$x))
     return(logLik)
 }
 
 logPrior = function(params) {
-    distn = tf$contrib$distributions$Normal(0.0, 10.0)
+    distn = tf$distributions$Normal(0.0, 10.0)
     logPrior = distn$log_prob(params$theta)
     return(logPrior)
 }

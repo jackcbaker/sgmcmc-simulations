@@ -31,13 +31,14 @@ installDeps = function() {
         quickSess = tf$Session()
         message("\n")
         # Create relevant directories if they do not exist
-        for (f in c("gaussMix", "logReg", "nn", "plots")) {
+        for (f in c("gaussMix", "logReg", "nn", "../Figures")) {
             dir.create(f, showWarnings = FALSE)
         }
     })
 }
 
 # Run simulations
+setwd("./Code")
 installDeps()
 source("plots.R")
 message("\n##########\nRunning sgmcmc stan plot (Section 2)")

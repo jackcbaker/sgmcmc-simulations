@@ -8,12 +8,12 @@ logLik = function( params, dataset ) {
     # Declare Sigma (assumed known)
     SigmaDiag = c(1, 1)
     # Declare distribution of each component
-    component1 = tf$contrib$distributions$MultivariateNormalDiag( params$theta1, SigmaDiag )
-    component2 = tf$contrib$distributions$MultivariateNormalDiag( params$theta2, SigmaDiag )
+    component1 = tf$distributions$MultivariateNormalDiag( params$theta1, SigmaDiag )
+    component2 = tf$distributions$MultivariateNormalDiag( params$theta2, SigmaDiag )
     # Declare allocation probabilities of each component
-    probs = tf$contrib$distributions$Categorical(c(0.5,0.5))
+    probs = tf$distributions$Categorical(c(0.5,0.5))
     # Declare full mixture distribution given components and allocation probabilities
-    distn = tf$contrib$distributions$Mixture(probs, list(component1, component2))
+    distn = tf$distributions$Mixture(probs, list(component1, component2))
     # Declare log likelihood
     logLik = tf$reduce_sum( distn$log_prob(dataset$X) )
     return( logLik )
@@ -25,7 +25,7 @@ logPrior = function( params ) {
     mu0 = c( 0, 0 )
     Sigma0Diag = c(10, 10)
     # Declare prior distribution
-    priorDistn = tf$contrib$distributions$MultivariateNormalDiag( mu0, Sigma0Diag )
+    priorDistn = tf$distributions$MultivariateNormalDiag( mu0, Sigma0Diag )
     # Declare log prior density and return
     logPrior = priorDistn$log_prob( params$theta1 ) + priorDistn$log_prob( params$theta2 )
     return( logPrior )

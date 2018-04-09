@@ -34,14 +34,14 @@ plotStanSGMCMC = function() {
         xlab("Number of Observations") +
         scale_x_log10(breaks=c(10^3, 10^4, 10^5, 10^6),labels=c("10^3", "10^4", "10^5", "10^6")) +
         ylab("KL divergence")
-    ggsave("plots/sgmcmc-stan-kl.pdf", width = 4, height = 2)
+    ggsave("../Figures/sgmcmc-stan-kl.pdf", width = 4, height = 2)
 
     p = ggplot(plotFrame, aes(x = N, y = time, ymin = timemin, ymax = timemax, fill = Method)) +
         geom_ribbon(alpha = 0.5) +
         xlab("Number of Observations") +
         scale_x_log10(breaks=c(10^3, 10^4, 10^5, 10^6),labels=c("10^3", "10^4", "10^5", "10^6")) +
         ylab("Run time (secs)")
-    ggsave("plots/sgmcmc-stan-time.pdf", width = 4, height = 2)
+    ggsave("../Figures/sgmcmc-stan-time.pdf", width = 4, height = 2)
 }
 
 plotGM = function() {
@@ -73,7 +73,7 @@ plotGM = function() {
         stat_density2d(alpha = 0.7, size = 1) +
         scale_color_manual(values=colors, name = methods) +
         facet_grid(.~Method)
-    ggsave("./plots/sim-gm.pdf", width = 12, height = 3)
+    ggsave("../Figures/sim-gm.pdf", width = 12, height = 3)
 }
 
 plotLogReg = function() {
@@ -107,7 +107,7 @@ plotLogReg = function() {
         xlab("Proportion of dataset processed") +
         scale_color_manual(values=colors, name = methods) +
         facet_grid(. ~ Type)
-    ggsave("plots/sim-lr.pdf", width = 7, height = 3)
+    ggsave("../Figures/sim-lr.pdf", width = 7, height = 3)
 }
 
 plotNN = function() {
@@ -142,5 +142,5 @@ plotNN = function() {
         xlab("Proportion of dataset processed") +
         scale_color_manual(values=colorPal, name = methods) +
         facet_grid(. ~ Type)
-    ggsave("plots/sim-nn.pdf", width = 7, height = 3)
+    ggsave("../Figures/sim-nn.pdf", width = 7, height = 3)
 }
