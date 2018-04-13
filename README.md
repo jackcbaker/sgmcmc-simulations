@@ -29,11 +29,8 @@ Simulations took approximately 3 hours on a quad core i5 laptop with 8GB RAM.
 
 ### Original Setup Details
 
-Original results were run on a laptop with Ubuntu 16.04 LTS; `R` version 3.2.3; `Python` version 2.7.12; `TensorFlow` version 1.3.0; `TensorFlow` for `R` version 1.4.0; `sgmcmc` version 0.2.0; `rstan` version 2.16.2. 
-
-Results were reproduced on a linux cluster running Ubuntu 14.04 LTS; `R`version 3.2.3; `Python` version 2.7.6; `TensorFlow` version 1.3.0; `TensorFlow` for `R` version 1.4.0; `sgmcmc` version 0.2.0; `rstan` version 2.16.2.
-
+Original results were run on a laptop with Ubuntu 16.04 LTS; `R` version 3.2.3; `Python` version 2.7.12; `TensorFlow` version 1.7.0; `TensorFlow` for `R` version 1.5; `sgmcmc` version 0.2.2; `rstan` version 2.16.2. 
 
 ### Remarks
 
-While we can guarantee reproducibility on a single platform, and have ensured reproducibility across two platforms (see Original Setup Section). The `TensorFlow` seed setting appears to be very dependent on version and platform, this can make reproducibility across different platforms difficult. We have done our best to make everything as reproducible as possible and have given as much detail as possible of our set up in the Original Setup Section to make it easier for the reviewer.
+While we can guarantee reproducibility on a single platform, and have ensured reproducibility across two platforms (see Original Setup Section). The `TensorFlow` seed setting appears to be very dependent on version and platform, this can make reproducibility across different platforms difficult. We have done our best to make everything as reproducible as possible and have given as much detail as possible of our set up in the Original Setup Section to make it easier.
